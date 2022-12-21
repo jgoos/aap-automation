@@ -1,0 +1,37 @@
+---
+- name: Test Ansible Automation Platform
+  hosts: all
+  connection: local
+  vars:
+    test_aap_validate_certs: false
+  tasks:
+    - name: Create a SCM credential
+      ansible.controller.credential:
+        name: "{{ test_aap_git_credential_name }}"
+        organization: "{{ test_aap_organization_name }}"
+        state: present
+        credential_type: Source Control
+        inputs:
+          username: "{{ test_aap_git_user }}"
+          ssh_key_data: "{{ lookup('file', 'test_id_ed25519') }}"
+          # ssh_key_unlock: "passphrase"
+        validate_certs: "{{ test_aap_validate_certs }}"
+
+    - name: Create Project
+      ansible.controller.project:
+        name: "{{ test_aap_project_name }}"
+        credential: "{{ test_aap_git_credential_name }}"
+        scm_type: git
+        scm_url: "{{ test_aap_git_url }}"
+        description: "{{ test_aap_project_description }}"
+        organization: "{{ test_aap_organization_name }}"
+        scm_update_on_launch: false
+        scm_update_cache_timeout: 60
+        state: present
+        validate_certs: "{{ test_aap_validate_certs }}"
+          #controller_config_file: "~/tower_cli.cfg"
+
+          #    - name: Create inventory
+          #    - name: Create jobtemplate
+          #    - name: Run jobtemplate
+
