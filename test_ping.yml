@@ -1,0 +1,7 @@
+---
+- name: Test connection to machine
+  hosts: all
+  become: true
+  tasks:
+    - name: Pong
+      ping:

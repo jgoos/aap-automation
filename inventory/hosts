@@ -1,0 +1,6 @@
+[local]
+127.0.0.1
+
+[test_clients]
+client81.home.arpa
+client82.home.arpa

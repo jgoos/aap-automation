@@ -17,6 +17,18 @@
           # ssh_key_unlock: "passphrase"
         validate_certs: "{{ test_aap_validate_certs }}"
 
+    - name: Create a Machine credential
+      ansible.controller.credential:
+        name: "{{ test_aap_machine_credential_name }}"
+        organization: "{{ test_aap_organization_name }}"
+        state: present
+        credential_type: Machine
+        inputs:
+          username: "{{ test_aap_machine_user }}"
+          ssh_key_data: "{{ lookup('file', 'test_id_ed25519') }}"
+          # ssh_key_unlock: "passphrase"
+        validate_certs: "{{ test_aap_validate_certs }}"
+
     - name: Create Project
       ansible.controller.project:
         name: "{{ test_aap_project_name }}"
