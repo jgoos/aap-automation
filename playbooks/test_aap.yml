@@ -1,7 +1,8 @@
 ---
 - name: Test Ansible Automation Platform
-  hosts: all
+  hosts: localhost
   connection: local
+  gather_facts: false
   vars:
     test_aap_validate_certs: false
   tasks:
@@ -20,18 +21,18 @@
         source_project: "{{ test_aap_project_name }}"
         organization: "{{ test_aap_organization_name }}"
         state: "absent"
+      ignore_errors: true
 
     - name: Delete inventory
       ansible.controller.inventory:
         name: "test_inventory"
         organization: "{{ test_aap_organization_name }}"
         state: "absent"
-          #controller_config_file: "~/tower_cli.cfg"
+      ignore_errors: true
 
     - name: Delete Project
       ansible.controller.project:
         name: "{{ test_aap_project_name }}"
-          #scm_type: git
         organization: "{{ test_aap_organization_name }}"
         state: absent
 
@@ -60,7 +61,7 @@
         credential_type: Source Control
         inputs:
           username: "{{ test_aap_git_user }}"
-          ssh_key_data: "{{ lookup('file', 'test_id_ed25519') }}"
+          ssh_key_data: "{{ lookup('file', '../secrets/' + test_aap_git_credential_private_key ) }}"
           # ssh_key_unlock: "passphrase"
         validate_certs: "{{ test_aap_validate_certs }}"
 
@@ -72,7 +73,7 @@
         credential_type: Machine
         inputs:
           username: "{{ test_aap_machine_user }}"
-          ssh_key_data: "{{ lookup('file', 'test_id_ed25519') }}"
+          ssh_key_data: "{{ lookup('file', '../secrets/' + test_aap_machine_credential_private_key ) }}"
           # ssh_key_unlock: "passphrase"
         validate_certs: "{{ test_aap_validate_certs }}"
 
@@ -84,7 +85,7 @@
         scm_url: "{{ test_aap_git_url }}"
         description: "{{ test_aap_project_description }}"
         organization: "{{ test_aap_organization_name }}"
-        scm_update_on_launch: false
+        scm_update_on_launch: true
         scm_update_cache_timeout: 60
         state: present
         validate_certs: "{{ test_aap_validate_certs }}"
@@ -92,7 +93,7 @@
     - name: Add inventory
       ansible.controller.inventory:
         name: "test_inventory"
-        description: "Our Foo Cloud Servers"
+        description: "Test servers inventory"
         organization: "{{ test_aap_organization_name }}"
         state: present
           #controller_config_file: "~/tower_cli.cfg"
@@ -101,7 +102,7 @@
       ansible.controller.inventory_source:
         name: "source-inventory"
         source_project: "{{ test_aap_project_name }}"
-        description: "Source for inventory"
+        description: "Source for test servers inventory"
         inventory: "test_inventory"
         #credential: ""
         overwrite: True

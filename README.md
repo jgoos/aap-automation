@@ -3,10 +3,10 @@
 This repository contains ansible code to automate tasks in Ansible Automation Platform 2.  
 Tested with AAP2 version: **2.3**
 
-## requirements
+## Requirements
 
 
-### install packages
+### Install packages
 
 Install requirements on the ansible control host.
 This is a RHEL8 or RHEL9 system with ansible-core. 
@@ -25,13 +25,13 @@ sudo subscription-manager repos --enable ansible-automation-platform-2.3-for-rhe
 sudo dnf install -y automation-controller-cli.x86_64
 ```
 
-### install ansible collections
+### Install ansible collections
 
 ``` shell
 ansible-galaxy collection install ansible.controller
 ```
 
-### create tower_cli.cfg
+### Create tower_cli.cfg
 
 Follow the instructions in the documentation to create the `tower_cli.cfg` file.
 
@@ -53,13 +53,42 @@ verify_ssl = true
 oauth_token = <TOKEN_FROM_PREVIOUS_STEP>
 ```
 
-## run
+### Copy vars_template.yml
 
-``` shell
-ansible-playbook test_aap.yml
+Copy the [vars_template.yml](vars_template.yml) to `vars_aap.ym` and update the variables.
+
+### SSH keypairs
+
+generate ssh-keypairs 
+
+#### SCM credential
+
+Steps:
+- generate keypair (make sure these are in the `secrets` directory).
+- update `vars_aap.yml` with the key name.
+
+``` yaml
+test_aap_git_credential_private_key: "test_id_ed25519"
 ```
 
-The `test_aap.yml` playbook will create components in AAP2.
+#### Machine credential
+
+Steps:
+- generate keypair (make sure these are in the `secrets` directory).
+- update `vars_aap.yml` with the key name.
+- make sure the ssh public key is added to the `authorized_keys` for the remote test machine.
+
+``` yaml
+test_aap_machine_credential_private_key: "test_id_ed25519"
+```
+
+## Run tests
+
+``` shell
+ansible-playbook -i inventory/hosts -e @vars_aap.yml playbooks/test_aap.yml
+```
+
+The [test_aap.yml](playbooks/test_aap.yml) playbook will create components in AAP2.
 
 1. create project
 2. create credentials
@@ -67,17 +96,6 @@ The `test_aap.yml` playbook will create components in AAP2.
 4. create jobtemplate
 5. run jobtemplate
 
-## variables
+### variables
 
-Create group vars `group_vars/all.yml`
-
-``` yaml
-test_aap_git_credential_name: "test_git_cred"
-test_aap_git_url: <GIT_REPO_URL>
-test_aap_git_user: "<GIT_USER>"
-test_aap_organization_name: "Test"
-test_aap_project_description: "AAP2 tests"
-test_aap_project_name: "test_project"
-test_aap_machine_credential_name: "test_machine_cred"
-test_aap_machine_user: "cloud-user"
-```
+See [vars_template.yml](vars_template.yml)

@@ -1,0 +1,11 @@
+---
+test_aap_git_credential_name: "test_git_cred"
+test_aap_git_credential_private_key: "test_id_ed25519"
+test_aap_git_url: "<GIT_REPO_URL>"
+test_aap_git_user: "<GIT_USER>"
+test_aap_organization_name: "Test"
+test_aap_project_description: "AAP tests"
+test_aap_project_name: "test_project"
+test_aap_machine_credential_name: "test_machine_cred"
+test_aap_machine_user: "<REMOTE_USER>"
+test_aap_machine_credential_private_key: "test_id_ed25519"
