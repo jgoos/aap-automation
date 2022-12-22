@@ -6,6 +6,10 @@
   vars:
     aap_workflow_organization_name: Test
   tasks:
+    - name: Launch a project with a timeout of 10 seconds
+      ansible.controller.project_update:
+        project: "{{ test_aap_project_name }}"
+        timeout: 10
     - name: Create input sanitize job template
       ansible.controller.job_template:
         name: "Patch Workflow Sanitize Input"
