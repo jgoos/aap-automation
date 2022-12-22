@@ -8,8 +8,8 @@ Tested with AAP2 version: **2.3**
 
 ### install packages
 
-Install requirements on ansible control host.
-This is a RHEL8 or RHEL9  system with ansible-core. 
+Install requirements on the ansible control host.
+This is a RHEL8 or RHEL9 system with ansible-core. 
 
 on RHEL8:
 ``` shell
@@ -22,17 +22,13 @@ sudo subscription-manager repos --enable ansible-automation-platform-2.3-for-rhe
 ```
 
 ``` shell
-
 sudo dnf install -y automation-controller-cli.x86_64
-
 ```
 
 ### install ansible collections
 
 ``` shell
-
-ansible-galaxy install -r collections/requirements.yml
-
+ansible-galaxy collection install ansible.controller
 ```
 
 ### create tower_cli.cfg
@@ -42,12 +38,19 @@ Follow the instructions in the documentation to create the `tower_cli.cfg` file.
 See: https://console.redhat.com/ansible/automation-hub/repo/published/ansible/controller/docs/
 
 - get a oauth token
-- create the `~/.tower_cli.cfg` 
 
 ``` shell
 
 awx login -k --conf.host https://<AAP_CONTROLLER_FQDN> --conf.username <USER_NAME> --conf.password <PASSWORD>
 
+```
+- create the `~/.tower_cli.cfg` 
+
+``` ini
+[general]
+host = https://<AAP_CONTROLLER_FQDN>
+verify_ssl = true
+oauth_token = <TOKEN_FROM_PREVIOUS_STEP>
 ```
 
 ## monitoring
