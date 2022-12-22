@@ -5,9 +5,6 @@
   become: false
   gather_facts: false
   tasks:
-    - name: Pong
-      ping:
-
     - name: After version 2.7 both 'msg' and 'fail_msg' can customize failing assertion message
       ansible.builtin.assert:
         that:

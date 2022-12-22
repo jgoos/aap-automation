@@ -1,0 +1,9 @@
+---
+- name: Pre-patch and requirements
+  hosts: localhost
+  connection: local
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Pong
+      ping:
