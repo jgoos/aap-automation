@@ -53,21 +53,19 @@ verify_ssl = true
 oauth_token = <TOKEN_FROM_PREVIOUS_STEP>
 ```
 
-## monitoring
+## run
 
-## tests
+``` shell
+ansible-playbook test_aap.yml
+```
 
-### create content
+The `test_aap.yml` playbook will create components in AAP2.
 
-1. create credential
-2. create project
+1. create project
+2. create credentials
 3. create inventory
 4. create jobtemplate
-
-### execute
-
-1. execute jobtemplate
-
+5. run jobtemplate
 
 ## variables
 
@@ -82,10 +80,4 @@ test_aap_project_description: "AAP2 tests"
 test_aap_project_name: "test_project"
 test_aap_machine_credential_name: "test_machine_cred"
 test_aap_machine_user: "cloud-user"
-```
-
-## run
-
-``` shell
-ansible-playbook test_aap.yml
 ```
