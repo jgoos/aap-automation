@@ -6,12 +6,6 @@
   vars:
     aap_workflow_organization_name: Test
   tasks:
-    - name: Create a workflow job template
-      ansible.controller.workflow_job_template:
-        name: example-workflow
-        description: created by Ansible Playbook
-        organization: Default
-
     - name: Create input sanitize job template
       ansible.controller.job_template:
         name: "patch_workflow_check_input"
@@ -20,5 +14,76 @@
         organization: "{{ aap_workflow_organization_name }}"
         inventory: "test_inventory"
         project: "{{ test_aap_project_name }}"
-        playbook: "patch_workflow_input_sanitize.yml"
+        playbook: "playbooks/patch_workflow_input_sanitize.yml"
         state: "present"
+
+    - name: Create a workflow job template
+      ansible.controller.workflow_job_template:
+        name: "Patch Workflow"
+        description: created by Ansible Playbook
+        organization: "{{ aap_workflow_organization_name }}"
+        workflow_nodes:
+          - identifier: "Sanitize survey input"
+            unified_job_template:
+              organization:
+                name: "{{ aap_workflow_organization_name }}"
+              name: "patch_workflow_check_input"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Pre-patch reqs and checks"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Pre-patch reqs and checks"
+            unified_job_template:
+              organization:
+                name: "{{ aap_workflow_organization_name }}"
+              name: "patch_workflow_check_input"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Patching"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Patching"
+            unified_job_template:
+              organization:
+                name: "{{ aap_workflow_organization_name }}"
+              name: "patch_workflow_check_input"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Post patching checks"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Post patching checks"
+            unified_job_template:
+              organization:
+                name: "{{ aap_workflow_organization_name }}"
+              name: "patch_workflow_check_input"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Send email to system owner"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Send email to system owner"
+            unified_job_template:
+              organization:
+                name: "{{ aap_workflow_organization_name }}"
+              name: "patch_workflow_check_input"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes: []
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
