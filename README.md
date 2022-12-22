@@ -12,22 +12,22 @@ Install requirements on the ansible control host.
 This is a RHEL8 or RHEL9 system with ansible-core. 
 
 on RHEL8:
-``` shell
+``` bash
 sudo subscription-manager repos --enable ansible-automation-platform-2.3-for-rhel-8-x86_64-rpms
 ```
 
 on RHEL9:
-``` shell
+``` bash
 sudo subscription-manager repos --enable ansible-automation-platform-2.3-for-rhel-9-x86_64-rpms
 ```
 
-``` shell
+``` bash
 sudo dnf install -y automation-controller-cli.x86_64
 ```
 
 ### Install ansible collections
 
-``` shell
+``` bash
 ansible-galaxy collection install ansible.controller
 ```
 
@@ -39,7 +39,7 @@ See: https://console.redhat.com/ansible/automation-hub/repo/published/ansible/co
 
 - get a oauth token
 
-``` shell
+``` bash
 
 awx login -k --conf.host https://<AAP_CONTROLLER_FQDN> --conf.username <USER_NAME> --conf.password <PASSWORD>
 
@@ -84,7 +84,7 @@ test_aap_machine_credential_private_key: "test_id_ed25519"
 
 ## Run tests
 
-``` shell
+``` bash
 ansible-playbook -i inventory/hosts -e @vars_aap.yml playbooks/test_aap.yml
 ```
 
