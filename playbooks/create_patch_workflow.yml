@@ -38,7 +38,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "patch_workflow_check_input"
+              name: "Patch Workflow Sanitize Input"
               type: job_template
             credentials: []
             related:
@@ -51,7 +51,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "patch_workflow_check_input"
+              name: "Patch Workflow Pre-path reqs and checks"
               type: job_template
             credentials: []
             related:
@@ -64,7 +64,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "patch_workflow_check_input"
+              name: "Patch Workflow Sanitize Input"
               type: job_template
             credentials: []
             related:
@@ -77,7 +77,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "patch_workflow_check_input"
+              name: "Patch Workflow Sanitize Input"
               type: job_template
             credentials: []
             related:
@@ -90,7 +90,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "patch_workflow_check_input"
+              name: "Patch Workflow Sanitize Input"
               type: job_template
             credentials: []
             related:
