@@ -118,7 +118,7 @@
         organization: "{{ test_aap_organization_name }}"
         inventory: "test_inventory"
         project: "{{ test_aap_project_name }}"
-        playbook: "ping.yml"
+        playbook: "playbooks/ping.yml"
         credentials: "{{ test_aap_machine_credential_name }}"
         state: "present"
 
