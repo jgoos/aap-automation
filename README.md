@@ -1,6 +1,6 @@
 # aap2-automation
 
-This repository contains ansible code to automate tasks in Ansible Automation Platform 2. 
+This repository contains ansible code to automate tasks in Ansible Automation Platform 2.  
 Tested with AAP2 version: **2.3**
 
 ## requirements
@@ -64,3 +64,25 @@ awx login -k --conf.host https://<AAP_CONTROLLER_FQDN> --conf.username <USER_NAM
 ### execute
 
 1. execute jobtemplate
+
+
+## variables
+
+Create group vars `group_vars/all.yml`
+
+``` yaml
+test_aap_git_credential_name: "test_git_cred"
+test_aap_git_url: <GIT_REPO_URL>
+test_aap_git_user: "<GIT_USER>"
+test_aap_organization_name: "Test"
+test_aap_project_description: "AAP2 tests"
+test_aap_project_name: "test_project"
+test_aap_machine_credential_name: "test_machine_cred"
+test_aap_machine_user: "cloud-user"
+```
+
+## run
+
+``` shell
+ansible-playbook test_aap.yml
+```
