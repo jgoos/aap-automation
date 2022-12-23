@@ -32,11 +32,31 @@
         playbook: "playbooks/patch_workflow_pre_patch_and_requirements.yml"
         state: "present"
 
+    - name: Query remote inventory
+      set_fact:
+        input_target_hosts: host1.example.com
+
     - name: Create a workflow job template
       ansible.controller.workflow_job_template:
         name: "Patch Workflow"
         description: created by Ansible Playbook
         organization: "{{ aap_workflow_organization_name }}"
+        survey_enabled: true
+        # survey_spec: "{{ lookup('file', '{{ playbook_dir }}/surveys/survey_spec.json') }}"
+        survey_spec:
+          name: Survey Example template
+          description: Description goes here
+          spec:
+            - question_name: Target Host
+              question_description: What is the hostname?
+              required: true
+              type: text
+              variable: target_hosts
+              min: 0
+              max: 1024
+              default: "{{ input_target_hosts }}"
+              choices: ''
+              new_question: true
         workflow_nodes:
           - identifier: "Sanitize survey input"
             unified_job_template:
@@ -65,6 +85,19 @@
               always_nodes: []
               credentials: []
           - identifier: "Patching"
+            unified_job_template:
+              organization:
+                name: "{{ aap_workflow_organization_name }}"
+              name: "Patch Workflow Sanitize Input"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Reboot"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Reboot"
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
