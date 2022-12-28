@@ -32,6 +32,17 @@
         playbook: "playbooks/patch_workflow_pre_patch_and_requirements.yml"
         state: "present"
 
+    - name: Create reboot job template
+      ansible.controller.job_template:
+        name: "Reboot system"
+        description: "Reboot the system"
+        job_type: "run"
+        organization: "{{ aap_workflow_organization_name }}"
+        inventory: "test_inventory"
+        project: "{{ test_aap_project_name }}"
+        playbook: "playbooks/reboot.yml"
+        state: "present"
+
     - name: Query remote inventory
       set_fact:
         input_target_hosts: host1.example.com
@@ -101,7 +112,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "Patch Workflow Sanitize Input"
+              name: "Reboot system"
               type: job_template
             credentials: []
             related:
