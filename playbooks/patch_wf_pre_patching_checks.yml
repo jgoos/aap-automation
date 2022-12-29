@@ -1,0 +1,8 @@
+---
+- name: Run PRE patching checks
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Run PRE patching checks
+      ansible.builtin.debug:
+        msg: "Running PRE patching checks"

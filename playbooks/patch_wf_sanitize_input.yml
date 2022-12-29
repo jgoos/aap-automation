@@ -1,5 +1,5 @@
 ---
-- name: Check input
+- name: Check and sanitize input
   hosts: localhost
   connection: local
   become: false
@@ -17,4 +17,3 @@
 # - Werkende FQDN
 # - Zit de FQDN in de dynamic inventory
 # Misschien al een ping uitvoeren op de machines voor de zekerheid?
-# 

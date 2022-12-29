@@ -1,0 +1,8 @@
+---
+- name: Run POST patching steps
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Run POST patching checks
+      ansible.builtin.debug:
+        msg: "Running POST patching checks"

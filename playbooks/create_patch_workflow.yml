@@ -6,11 +6,11 @@
   vars:
     aap_workflow_organization_name: Test
   tasks:
-    - name: Launch a project with a timeout of 10 seconds
+    - name: Update project
       ansible.controller.project_update:
         project: "{{ test_aap_project_name }}"
-        timeout: 10
-    - name: Create input sanitize job template
+
+    - name: Create sanitize input job template
       ansible.controller.job_template:
         name: "Patch Workflow Sanitize Input"
         description: "Sanitize Checks"
@@ -18,21 +18,32 @@
         organization: "{{ aap_workflow_organization_name }}"
         inventory: "test_inventory"
         project: "{{ test_aap_project_name }}"
-        playbook: "playbooks/patch_workflow_sanitize_input.yml"
+        playbook: "playbooks/patch_wf_sanitize_input.yml"
         state: "present"
 
-    - name: Create Pre-path reqs and checks job template
+    - name: Create PRE patching checks
       ansible.controller.job_template:
-        name: "Patch Workflow Pre-path reqs and checks"
-        description: "Patch Workflow Pre-path reqs and checks"
+        name: "PRE patching checks"
+        description: "PRE patching checks"
         job_type: "run"
         organization: "{{ aap_workflow_organization_name }}"
         inventory: "test_inventory"
         project: "{{ test_aap_project_name }}"
-        playbook: "playbooks/patch_workflow_pre_patch_and_requirements.yml"
+        playbook: "playbooks/patch_wf_pre_patching_checks.yml"
         state: "present"
 
-    - name: Create reboot job template
+    - name: Create Patch job template
+      ansible.controller.job_template:
+        name: "Patch system"
+        description: "Patch the system"
+        job_type: "run"
+        organization: "{{ aap_workflow_organization_name }}"
+        inventory: "test_inventory"
+        project: "{{ test_aap_project_name }}"
+        playbook: "playbooks/patch_wf_patch_system.yml"
+        state: "present"
+
+    - name: Create Reboot job template
       ansible.controller.job_template:
         name: "Reboot system"
         description: "Reboot the system"
@@ -40,9 +51,21 @@
         organization: "{{ aap_workflow_organization_name }}"
         inventory: "test_inventory"
         project: "{{ test_aap_project_name }}"
-        playbook: "playbooks/reboot.yml"
+        playbook: "playbooks/patch_wf_reboot_system.yml"
         state: "present"
 
+    - name: Create POST patching checks
+      ansible.controller.job_template:
+        name: "POST patching checks"
+        description: "POST patching checks"
+        job_type: "run"
+        organization: "{{ aap_workflow_organization_name }}"
+        inventory: "test_inventory"
+        project: "{{ test_aap_project_name }}"
+        playbook: "playbooks/patch_wf_post_patching_checks.yml"
+        state: "present"
+
+    # TODO fetch hostnames to update the survey selection field
     - name: Query remote inventory
       set_fact:
         input_target_hosts: host1.example.com
@@ -86,7 +109,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "Patch Workflow Pre-path reqs and checks"
+              name: "PRE patching checks"
               type: job_template
             credentials: []
             related:
@@ -99,7 +122,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "Patch Workflow Sanitize Input"
+              name: "Patch system"
               type: job_template
             credentials: []
             related:
@@ -125,7 +148,7 @@
             unified_job_template:
               organization:
                 name: "{{ aap_workflow_organization_name }}"
-              name: "Patch Workflow Sanitize Input"
+              name: "POST patching checks"
               type: job_template
             credentials: []
             related:

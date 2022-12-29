@@ -1,0 +1,8 @@
+---
+- name: Patch the system
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Patching the system
+      ansible.builtin.debug:
+        msg: "Patching the system"
