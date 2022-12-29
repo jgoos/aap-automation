@@ -51,7 +51,7 @@
         state: absent
         credential_type: Machine
         validate_certs: "{{ test_aap_validate_certs }}"
-          
+
     # CREATE
     - name: Create a SCM credential
       ansible.controller.credential:
@@ -96,7 +96,7 @@
         description: "Test servers inventory"
         organization: "{{ test_aap_organization_name }}"
         state: present
-          #controller_config_file: "~/tower_cli.cfg"
+        # controller_config_file: "~/tower_cli.cfg"
 
     - name: Add an inventory source
       ansible.controller.inventory_source:
@@ -104,11 +104,11 @@
         source_project: "{{ test_aap_project_name }}"
         description: "Source for test servers inventory"
         inventory: "test_inventory"
-        #credential: ""
-        overwrite: True
-        update_on_launch: True
+        # credential: ""
+        overwrite: true
+        update_on_launch: true
         organization: "{{ test_aap_organization_name }}"
-        source: scm 
+        source: scm
         source_path: "inventory/hosts"
 
     - name: Create Ping job template
