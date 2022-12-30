@@ -85,7 +85,7 @@
         scm_url: "{{ test_aap_git_url }}"
         description: "{{ test_aap_project_description }}"
         organization: "{{ test_aap_organization_name }}"
-        scm_update_on_launch: true
+        scm_update_on_launch: false
         scm_update_cache_timeout: 60
         state: present
         validate_certs: "{{ test_aap_validate_certs }}"
