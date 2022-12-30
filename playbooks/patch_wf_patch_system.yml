@@ -2,7 +2,14 @@
 - name: Patch the system
   hosts: all
   gather_facts: true
+  become: true
+  vars:
+    aap_patch_wf_security_updates: true
+    aap_patch_wf_bugfix_updates: true
   tasks:
     - name: Patching the system
-      ansible.builtin.debug:
-        msg: "Patching the system"
+      ansible.builtin.dnf:
+        name: '*'
+        bugfix: "{{ aap_patch_wf_bugfix_updates }}"
+        security: "{{ aap_patch_wf_security_updates }}"
+        state: latest
