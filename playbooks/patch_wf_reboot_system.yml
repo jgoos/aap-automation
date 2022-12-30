@@ -2,6 +2,8 @@
 - name: Reboot the system
   hosts: all
   gather_facts: true
+  vars:
+    aap_patch_wf_reboot_required: false
   tasks:
     - name: Unconditionally reboot the machine with all defaults
       ansible.builtin.reboot:
