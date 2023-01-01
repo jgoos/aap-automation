@@ -8,7 +8,7 @@
       "help_text": "example: smtp.gmail.com"
     },
     {
-      "id": "smtp_port",
+      "id": "port",
       "type": "string",
       "label": "port",
       "secret": false
@@ -30,6 +30,7 @@
   "required": [
     "username",
     "password",
-    "host"
+    "host",
+    "port"
   ]
 }

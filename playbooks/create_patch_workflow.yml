@@ -19,8 +19,8 @@
 
     - name: Create SMTP credential type
       ansible.controller.credential_type:
-        name: STMP
-        description: Credentials type for STMP
+        name: SMTP
+        description: Credentials type for SMTP
         kind: cloud
         inputs: "{{ lookup('file', 'templates/smtp_inputs_config.json') }}"
         injectors: "{{ lookup('file', 'templates/smtp_injector_config.json') }}"

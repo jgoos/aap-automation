@@ -6,11 +6,11 @@
   tasks:
     - name: Send email
       community.general.mail:
-        host: "{{ aap_workflow_smtp_server }}"
-        port: 587
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
         secure: starttls
-        username: "{{ vault_workflow_smtp_email }}"
-        password: "{{ vault_workflow_smtp_password }}"
+        username: "{{ smtp_user }}"
+        password: "{{ smtp_password }}"
         sender: "{{ aap_workflow_mail_sender }}"
         to: "{{ aap_workflow_mail_send_to }}"
         subject: "Patch report for system {{ inventory_hostname }}"
