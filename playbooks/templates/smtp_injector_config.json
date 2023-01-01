@@ -1,0 +1,7 @@
+{
+  "extra_vars": {
+    "smtp_host": "{{ host }}",
+    "smtp_password": "{{ password }}",
+    "smtp_username": "{{ username }}"
+  }
+}

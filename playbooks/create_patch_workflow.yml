@@ -10,11 +10,22 @@
     aap_workflow_limit: client81.home.arpa
     aap_workflow_inventory: "test_inventory"
     aap_patch_wf_reboot_required: false
+    aap_patch_wf_validate_certs: false
   tasks:
     - name: Update project
       ansible.controller.project_update:
         project: "{{ test_aap_project_name }}"
       when: aap_workflow_update_project
+
+    - name: Create SMTP credential type
+      ansible.controller.credential_type:
+        name: STMP
+        description: Credentials type for STMP
+        kind: cloud
+        inputs: "{{ lookup('file', 'templates/smtp_inputs_config.json') }}"
+        injectors: "{{ lookup('file', 'templates/smtp_injector_config.json') }}"
+        state: present
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
 
     - name: Create sanitize input job template
       ansible.controller.job_template:
@@ -29,6 +40,7 @@
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_sanitize_input.yml"
         state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
 
     - name: Create PRE patching checks
       ansible.controller.job_template:
@@ -45,6 +57,7 @@
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_pre_patching_checks.yml"
         state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
 
     - name: Create Patch job template
       ansible.controller.job_template:
@@ -61,6 +74,7 @@
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_patch_system.yml"
         state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
 
     - name: Create Reboot job template
       ansible.controller.job_template:
@@ -77,6 +91,7 @@
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_reboot_system.yml"
         state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
 
     - name: Create POST patching checks
       ansible.controller.job_template:
@@ -93,6 +108,22 @@
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_post_patching_checks.yml"
         state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+
+    - name: Create Mail job template
+      ansible.controller.job_template:
+        name: "Mail patch result"
+        description: "Mail patch result"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        inventory: "{{ aap_workflow_inventory }}"
+        use_fact_cache: true
+        job_type: "run"
+        organization: "{{ aap_workflow_organization_name }}"
+        project: "{{ test_aap_project_name }}"
+        playbook: "playbooks/patch_wf_send_email.yml"
+        state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
 
     # TODO fetch hostnames to update the survey selection field
     - name: Query remote inventory
@@ -108,6 +139,7 @@
         ask_limit_on_launch: true
         limit: "{{ aap_workflow_limit }}"
         inventory: "{{ aap_workflow_inventory }}"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
         survey_enabled: true
         # survey_spec: "{{ lookup('file', '{{ playbook_dir }}/surveys/survey_spec.json') }}"
         survey_spec:
