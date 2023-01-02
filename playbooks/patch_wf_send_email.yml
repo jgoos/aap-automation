@@ -11,7 +11,7 @@
         secure: starttls
         username: "{{ smtp_username }}"
         password: "{{ smtp_password }}"
-        sender: "{{ aap_workflow_mail_sender }}"
+        sender: "Ansible Automation Platform <{{ aap_workflow_mail_sender }}>"
         to: "{{ aap_workflow_mail_send_to }}"
         subject: "Patch report for system {{ inventory_hostname }}"
         body: "{{ lookup('ansible.builtin.template', 'templates/mail_template.j2') }}"

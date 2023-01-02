@@ -4,18 +4,21 @@
   connection: local
   gather_facts: false
   vars:
-    aap_workflow_organization_name: Test
-    aap_workflow_update_project: false
-    aap_workflow_machine_credential: "test_machine_cred"
-    aap_workflow_limit: client81.home.arpa
-    aap_workflow_inventory: "test_inventory"
+    aap_patch_wf_smtp_host: smtp.gmail.com
+    aap_patch_wf_smtp_port: 587
+    aap_patch_wf_organization_name: Test
+    aap_patch_wf_update_project: false
+    aap_patch_wf_machine_credential: "test_machine_cred"
+    aap_patch_wf_limit: client81.home.arpa
+    aap_patch_wf_inventory: "test_inventory"
     aap_patch_wf_reboot_required: false
     aap_patch_wf_validate_certs: false
+    aap_patch_wf_smtp_credential_name: "smtp_patch_wf_cred"
   tasks:
     - name: Update project
       ansible.controller.project_update:
         project: "{{ test_aap_project_name }}"
-      when: aap_workflow_update_project
+      when: aap_patch_wf_update_project
 
     - name: Create SMTP credential type
       ansible.controller.credential_type:
@@ -27,16 +30,29 @@
         state: present
         validate_certs: "{{ aap_patch_wf_validate_certs }}"
 
+    - name: Create a SMTP credential
+      ansible.controller.credential:
+        name: "{{ aap_patch_wf_smtp_credential_name }}"
+        organization: Default
+        state: present
+        credential_type: SMTP
+        inputs:
+          username: "{{ vault_workflow_smtp_email }}"
+          password: "{{ vault_workflow_smtp_password }}"
+          host: "{{ aap_patch_wf_smtp_host }}"
+          port: "{{ aap_patch_wf_smtp_port | string }}"
+      no_log: true
+
     - name: Create sanitize input job template
       ansible.controller.job_template:
         name: "Patch Workflow Sanitize Input"
         description: "Sanitize Checks"
         use_fact_cache: true
         job_type: "run"
-        organization: "{{ aap_workflow_organization_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
-        inventory: "{{ aap_workflow_inventory }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_sanitize_input.yml"
         state: "present"
@@ -47,13 +63,13 @@
         name: "PRE patching checks"
         description: "PRE patching checks"
         credentials:
-          - "{{ aap_workflow_machine_credential }}"
+          - "{{ aap_patch_wf_machine_credential }}"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
-        inventory: "{{ aap_workflow_inventory }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
         use_fact_cache: true
         job_type: "run"
-        organization: "{{ aap_workflow_organization_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_pre_patching_checks.yml"
         state: "present"
@@ -64,13 +80,13 @@
         name: "Patch system"
         description: "Patch the system"
         credentials:
-          - "{{ aap_workflow_machine_credential }}"
+          - "{{ aap_patch_wf_machine_credential }}"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
-        inventory: "{{ aap_workflow_inventory }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
         use_fact_cache: true
         job_type: "run"
-        organization: "{{ aap_workflow_organization_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_patch_system.yml"
         state: "present"
@@ -81,13 +97,13 @@
         name: "Reboot system"
         description: "Reboot the system"
         credentials:
-          - "{{ aap_workflow_machine_credential }}"
+          - "{{ aap_patch_wf_machine_credential }}"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
-        inventory: "{{ aap_workflow_inventory }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
         use_fact_cache: true
         job_type: "run"
-        organization: "{{ aap_workflow_organization_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_reboot_system.yml"
         state: "present"
@@ -98,13 +114,13 @@
         name: "POST patching checks"
         description: "POST patching checks"
         credentials:
-          - "{{ aap_workflow_machine_credential }}"
+          - "{{ aap_patch_wf_machine_credential }}"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
-        inventory: "{{ aap_workflow_inventory }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
         use_fact_cache: true
         job_type: "run"
-        organization: "{{ aap_workflow_organization_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_post_patching_checks.yml"
         state: "present"
@@ -116,14 +132,20 @@
         description: "Mail patch result"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
-        inventory: "{{ aap_workflow_inventory }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
         use_fact_cache: true
         job_type: "run"
-        organization: "{{ aap_workflow_organization_name }}"
+        credentials: "{{ aap_patch_wf_smtp_credential_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
         project: "{{ test_aap_project_name }}"
         playbook: "playbooks/patch_wf_send_email.yml"
         state: "present"
         validate_certs: "{{ aap_patch_wf_validate_certs }}"
+        extra_vars:
+          aap_workflow_mail_sender: jgoos.code@gmail.com
+          aap_workflow_mail_send_to: 78yughvb@pm.me
+          aap_patch_workflow_patch_step: false
+          aap_patch_workflow_reboot_step: false
 
     # TODO fetch hostnames to update the survey selection field
     - name: Query remote inventory
@@ -134,11 +156,11 @@
       ansible.controller.workflow_job_template:
         name: "Patch Workflow"
         description: created by Ansible Playbook
-        organization: "{{ aap_workflow_organization_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
-        limit: "{{ aap_workflow_limit }}"
-        inventory: "{{ aap_workflow_inventory }}"
+        limit: "{{ aap_patch_wf_limit }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
         validate_certs: "{{ aap_patch_wf_validate_certs }}"
         survey_enabled: true
         # survey_spec: "{{ lookup('file', '{{ playbook_dir }}/surveys/survey_spec.json') }}"
@@ -169,7 +191,7 @@
           - identifier: "Sanitize survey input"
             unified_job_template:
               organization:
-                name: "{{ aap_workflow_organization_name }}"
+                name: "{{ aap_patch_wf_organization_name }}"
               name: "Patch Workflow Sanitize Input"
               type: job_template
             credentials: []
@@ -182,7 +204,7 @@
           - identifier: "Pre-patch reqs and checks"
             unified_job_template:
               organization:
-                name: "{{ aap_workflow_organization_name }}"
+                name: "{{ aap_patch_wf_organization_name }}"
               name: "PRE patching checks"
               type: job_template
             credentials: []
@@ -195,7 +217,7 @@
           - identifier: "Patching"
             unified_job_template:
               organization:
-                name: "{{ aap_workflow_organization_name }}"
+                name: "{{ aap_patch_wf_organization_name }}"
               name: "Patch system"
               type: job_template
             credentials: []
@@ -208,7 +230,7 @@
           - identifier: "Reboot"
             unified_job_template:
               organization:
-                name: "{{ aap_workflow_organization_name }}"
+                name: "{{ aap_patch_wf_organization_name }}"
               name: "Reboot system"
               type: job_template
             credentials: []
@@ -221,7 +243,7 @@
           - identifier: "Post patching checks"
             unified_job_template:
               organization:
-                name: "{{ aap_workflow_organization_name }}"
+                name: "{{ aap_patch_wf_organization_name }}"
               name: "POST patching checks"
               type: job_template
             credentials: []
@@ -234,8 +256,8 @@
           - identifier: "Send email to system owner"
             unified_job_template:
               organization:
-                name: "{{ aap_workflow_organization_name }}"
-              name: "Patch Workflow Sanitize Input"
+                name: "{{ aap_patch_wf_organization_name }}"
+              name: "Mail patch result"
               type: job_template
             credentials: []
             related:
