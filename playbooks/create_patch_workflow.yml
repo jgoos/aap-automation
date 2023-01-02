@@ -4,16 +4,16 @@
   connection: local
   gather_facts: false
   vars:
+    aap_patch_wf_inventory: "test_inventory"
+    aap_patch_wf_limit: client81.home.arpa
+    aap_patch_wf_machine_credential: "test_machine_cred"
+    aap_patch_wf_organization_name: Test
+    aap_patch_wf_reboot_required: false
+    aap_patch_wf_smtp_credential_name: "smtp_patch_wf_cred"
     aap_patch_wf_smtp_host: smtp.gmail.com
     aap_patch_wf_smtp_port: 587
-    aap_patch_wf_organization_name: Test
     aap_patch_wf_update_project: false
-    aap_patch_wf_machine_credential: "test_machine_cred"
-    aap_patch_wf_limit: client81.home.arpa
-    aap_patch_wf_inventory: "test_inventory"
-    aap_patch_wf_reboot_required: false
     aap_patch_wf_validate_certs: false
-    aap_patch_wf_smtp_credential_name: "smtp_patch_wf_cred"
   tasks:
     - name: Update project
       ansible.controller.project_update:
@@ -142,10 +142,8 @@
         state: "present"
         validate_certs: "{{ aap_patch_wf_validate_certs }}"
         extra_vars:
-          aap_workflow_mail_sender: jgoos.code@gmail.com
-          aap_workflow_mail_send_to: 78yughvb@pm.me
-          aap_patch_workflow_patch_step: false
-          aap_patch_workflow_reboot_step: false
+          aap_patch_wf_patch_step: false
+          aap_patch_wf_reboot_step: false
 
     # TODO fetch hostnames to update the survey selection field
     - name: Query remote inventory
@@ -159,6 +157,7 @@
         organization: "{{ aap_patch_wf_organization_name }}"
         ask_inventory_on_launch: true
         ask_limit_on_launch: true
+        destroy_current_nodes: true
         limit: "{{ aap_patch_wf_limit }}"
         inventory: "{{ aap_patch_wf_inventory }}"
         validate_certs: "{{ aap_patch_wf_validate_certs }}"
@@ -168,6 +167,13 @@
           name: Survey Example template
           description: Description goes here
           spec:
+            - question_name: "Reboot the server after patching?"
+              type: "multiplechoice"
+              question_description: "Selecting yes will reboot the server after patching"
+              variable: "aap_patch_wf_survey_reboot_selected"
+              choices: ["yes", "no"]
+              required: true
+              default: "no"
             - question_name: Target Host
               question_description: What is the hostname?
               required: true
@@ -178,15 +184,13 @@
               default: "{{ input_target_hosts }}"
               choices: ''
               new_question: true
-            - question_name: Test
-              question_description: What is the Test?
-              required: true
-              type: integer
-              variable: my_param
-              min: 0
-              max: 1024
-              default: 50
-              new_question: true
+            - question_name: "mchoice"
+              type: "multiselect"
+              question_description: "Can have multiples of these"
+              variable: "multi_choice"
+              choices: ["one", "two", "three","four","five","six","seven","eight","nine","ten","twelve","thirteen"]
+              required: false
+              default: "one\nthree"
         workflow_nodes:
           - identifier: "Sanitize survey input"
             unified_job_template:
