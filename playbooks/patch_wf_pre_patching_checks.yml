@@ -15,7 +15,8 @@
       ignore_errors: true
 
     - name: Set reboot fact
-      ansible.builtin.set_fact:
-        aap_patch_wf_reboot_required: true
-        aap_patch_wf_reboot_required_stdout: "{{ aap_patch_wf_needs_restarting.stdout }}"
+      ansible.builtin.set_stats:
+        data:
+          aap_patch_wf_reboot_required: true
+          aap_patch_wf_reboot_required_stdout: "{{ aap_patch_wf_needs_restarting.stdout }}"
       when: aap_patch_wf_needs_restarting.rc == 1
