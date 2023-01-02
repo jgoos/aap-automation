@@ -1,6 +1,6 @@
 ---
 - name: Send email to service team / user
-  hosts: localhost
+  hosts: all
   connection: local
   gather_facts: false
   vars:
