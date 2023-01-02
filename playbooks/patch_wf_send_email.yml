@@ -3,6 +3,9 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  vars:
+    aap_patch_wf_mail_sender: "{{ smtp_username }}"
+    aap_patch_wf_mail_send_to: "{{ system_owner.email }}"
   tasks:
     - name: Send email
       community.general.mail:
@@ -11,7 +14,7 @@
         secure: starttls
         username: "{{ smtp_username }}"
         password: "{{ smtp_password }}"
-        sender: "Ansible Automation Platform <{{ aap_workflow_mail_sender }}>"
-        to: "{{ aap_workflow_mail_send_to }}"
+        sender: "Ansible Automation Platform <{{ aap_patch_wf_mail_sender }}>"
+        to: "{{ aap_patch_wf_mail_send_to }}"
         subject: "Patch report for system {{ inventory_hostname }}"
         body: "{{ lookup('ansible.builtin.template', 'templates/mail_template.j2') }}"
