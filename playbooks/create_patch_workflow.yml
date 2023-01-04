@@ -147,7 +147,7 @@
 
     # TODO fetch hostnames to update the survey selection field
     - name: Query remote inventory
-      set_fact:
+      ansible.builtin.set_fact:
         input_target_hosts: host1.example.com
 
     - name: Create a workflow job template
@@ -188,7 +188,7 @@
               type: "multiselect"
               question_description: "Can have multiples of these"
               variable: "multi_choice"
-              choices: ["one", "two", "three","four","five","six","seven","eight","nine","ten","twelve","thirteen"]
+              choices: ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "twelve", "thirteen"]
               required: false
               default: "one\nthree"
         workflow_nodes:

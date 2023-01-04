@@ -22,6 +22,7 @@
         organization: "{{ test_aap_organization_name }}"
         state: "absent"
       ignore_errors: true
+      failed_when: 
 
     - name: Delete inventory
       ansible.controller.inventory:
@@ -61,7 +62,7 @@
         credential_type: Source Control
         inputs:
           username: "{{ test_aap_git_user }}"
-          ssh_key_data: "{{ lookup('file', '../secrets/' + test_aap_git_credential_private_key ) }}"
+          ssh_key_data: "{{ lookup('file', '../secrets/' + test_aap_git_credential_private_key) }}"
           # ssh_key_unlock: "passphrase"
         validate_certs: "{{ test_aap_validate_certs }}"
 
@@ -73,7 +74,7 @@
         credential_type: Machine
         inputs:
           username: "{{ test_aap_machine_user }}"
-          ssh_key_data: "{{ lookup('file', '../secrets/' + test_aap_machine_credential_private_key ) }}"
+          ssh_key_data: "{{ lookup('file', '../secrets/' + test_aap_machine_credential_private_key) }}"
           # ssh_key_unlock: "passphrase"
         validate_certs: "{{ test_aap_validate_certs }}"
 

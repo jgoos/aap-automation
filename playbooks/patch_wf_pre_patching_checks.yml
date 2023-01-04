@@ -7,4 +7,3 @@
     - name: Pre patch steps
       ansible.builtin.debug:
         msg: "Run pre-patch steps"
-
