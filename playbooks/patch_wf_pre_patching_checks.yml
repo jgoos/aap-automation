@@ -4,19 +4,7 @@
   gather_facts: true
   become: true
   tasks:
-    - name: Install packages needed for pre patch check
-      ansible.builtin.dnf:
-        name: yum-utils
-        state: installed
+    - name: Pre patch steps
+      ansible.builtin.debug:
+        msg: "Run pre-patch steps"
 
-    - name: Check if restart is needed
-      ansible.builtin.command: needs-restarting -r
-      register: aap_patch_wf_needs_restarting
-      ignore_errors: true
-
-    - name: Set reboot fact
-      ansible.builtin.set_stats:
-        data:
-          aap_patch_wf_reboot_required: true
-          aap_patch_wf_reboot_required_stdout: "{{ aap_patch_wf_needs_restarting.stdout }}"
-      when: aap_patch_wf_needs_restarting.rc == 1
