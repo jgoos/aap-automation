@@ -6,6 +6,7 @@
   vars:
     aap_patch_wf_security_updates: true
     aap_patch_wf_bugfix_updates: true
+    aap_patch_wf_check_reboot_needed: true
   tasks:
     - name: Patching the system
       ansible.builtin.dnf:
@@ -13,3 +14,23 @@
         bugfix: "{{ aap_patch_wf_bugfix_updates }}"
         security: "{{ aap_patch_wf_security_updates }}"
         state: latest
+
+    - name: Check if reboot is needed
+      block:
+        - name: Install packages needed for pre patch check
+          ansible.builtin.dnf:
+            name: yum-utils
+            state: installed
+
+        - name: Check if restart is needed
+          ansible.builtin.command: needs-restarting -r
+          register: aap_patch_wf_needs_restarting
+          ignore_errors: true
+
+        - name: Set reboot facts
+          ansible.builtin.set_stats:
+            data:
+              aap_patch_wf_reboot_required: true
+              aap_patch_wf_reboot_required_stdout: "{{ aap_patch_wf_needs_restarting.stdout }}"
+          when: aap_patch_wf_needs_restarting.rc == 1
+      when: aap_patch_wf_check_reboot_needed
