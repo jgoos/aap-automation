@@ -1,4 +1,4 @@
 ---
 collections:
-  - jgoos.patch_workflow
+  - jgooss.patch_workflow
   - community.general

@@ -22,7 +22,6 @@
         organization: "{{ test_aap_organization_name }}"
         state: "absent"
       ignore_errors: true
-      failed_when: 
 
     - name: Delete inventory
       ansible.controller.inventory:
