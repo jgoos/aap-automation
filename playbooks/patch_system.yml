@@ -1,7 +1,3 @@
 ---
-- name: Patch the system
-  hosts: '{{target|default("all")}}'
-  gather_facts: true
-  become: true
-  roles:
-    - jgoos.patch_workflow.patch
+- name: Run playbook from a collection
+  ansible.builtin.import_playbook: jgoos.patch_workflow.patch_system

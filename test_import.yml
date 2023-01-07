@@ -1,8 +1,0 @@
----
-- hosts: localhost
-  tasks:
-    - ansible.builtin.debug:
-        msg: play1
-
-- name: Include a play after another play
-  ansible.builtin.import_playbook: jgoos.patch_workflow.reboot_system.yml
