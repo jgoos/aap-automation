@@ -56,17 +56,16 @@ email:
 - Job Template Send email to system owner
 
 - [create_patch_workflow.yml](playbooks/create_patch_workflow.yml)
-- [patch_wf_on_failure.yml](playbooks/patch_wf_on_failure.yml)
-- [patch_wf_patch_system.yml](playbooks/patch_wf_patch_system.yml)
-- [patch_wf_post_patching_checks.yml](playbooks/patch_wf_post_patching_checks.yml)
-- [patch_wf_pre_patching_checks.yml](playbooks/patch_wf_pre_patching_checks.yml)
-- [patch_wf_reboot_system.yml](playbooks/patch_wf_reboot_system.yml)
-- [patch_wf_sanitize_input.yml](playbooks/patch_wf_sanitize_input.yml)
-- [patch_wf_send_email.yml](playbooks/patch_wf_send_email.yml)
 - [ping.yml](playbooks/ping.yml)
 - [test_aap.yml](playbooks/test_aap.yml)
+- [sanitize_input.yml](playbooks/sanitize_input.yml)
+- [pre_patching_checks.yml](playbooks/pre_patching_checks.yml)
+- [patch_system.yml](playbooks/patch_system.yml)
+- [reboot_system.yml](playbooks/reboot_system.yml)
+- [post_patching_checks.yml](playbooks/post_patching_checks.yml)
+- [send_email.yml](playbooks/send_email.yml)
 
-### Overview
+### Patch Workflow details
 
 ```mermaid
 graph TB
@@ -84,3 +83,33 @@ graph TB
     reboot -->|On Failure| error
     post-patch -->|On Failure| error
 ```
+
+#### Patch Workflow
+
+```mermaid
+graph TD
+
+patch systems --> sync updated inventory
+sync updated inventory --> read smart inventory
+read smart inventory --> update survey
+
+patch systems -->|with reboot| sync updated inventory
+patch systems -->|without reboot| notify user
+notify user -->|click link| Reboot workflow
+
+subgraph Reboot workflow
+    sync updated inventory --> read smart inventory
+    read smart inventory --> update survey
+end
+```
+
+#### Reboot Workflow
+
+```mermaid
+graph TD
+
+reboot the system --> sync updated inventory
+sync updated inventory --> read smart inventory
+read smart inventory --> update Patch Workflow survey
+```
+
