@@ -89,17 +89,17 @@ graph TB
 ```mermaid
 graph TD
 
-patch systems --> sync updated inventory
-sync updated inventory --> read smart inventory
-read smart inventory --> update survey
+patch_systems(Patch systems) --> sync_updated_inventory(Sync updated inventory)
+sync_updated_inventory --> read_smart_inventory(Read smart inventory)
+read_smart_inventory --> update_survey(Update survey)
 
-patch systems -->|with reboot| sync updated inventory
-patch systems -->|without reboot| notify user
-notify user -->|click link| Reboot workflow
+patch_systems -->|With reboot| sync_updated_inventory
+patch_systems -->|Without reboot| notify_user(Notify user)
+notify_user -->|Click link| reboot_workflow(Reboot workflow)
 
 subgraph Reboot workflow
-    sync updated inventory --> read smart inventory
-    read smart inventory --> update survey
+    sync_updated_inventory --> read_smart_inventory
+    read_smart_inventory --> update_survey
 end
 ```
 
@@ -108,8 +108,8 @@ end
 ```mermaid
 graph TD
 
-reboot the system --> sync updated inventory
-sync updated inventory --> read smart inventory
-read smart inventory --> update Patch Workflow survey
+reboot["Reboot the system"] --> sync["Sync updated inventory"]
+sync --> read["Read smart inventory"]
+read --> update["Update Patch Workflow survey"]
 ```
 
