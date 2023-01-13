@@ -39,6 +39,18 @@ Run the [create_patch_workflow.yml](playbooks/create_patch_workflow.yml) playboo
 ansible-playbook -e @vault.yml -e @patch_vars.yml playbooks/create_patch_workflow.yml -v --ask-vault-pass
 ```
 
+## playbooks
+
+| Workflow Step | Playbook |
+| --- | --- |
+| Playbook to create workflow in AAP | [create_patch_workflow.yml](playbooks/create_patch_workflow.yml) |
+| Job Template Sanitize input | [sanitize_input.yml](playbooks/sanitize_input.yml) |
+| Job Template Pre-patch reqs and checks | [pre_patching_checks.yml](playbooks/pre_patching_checks.yml) |
+| Job Template Patching | [patch_system.yml](playbooks/patch_system.yml) |
+| Job Template Reboot system | [reboot_system.yml](playbooks/reboot_system.yml) |
+| Job Template Post-patching checks | [post_patching_checks.yml](playbooks/post_patching_checks.yml) |
+| Job Template Send email to system owner | [send_email.yml](playbooks/send_email.yml) |
+
 ## Workflow Overview
 
 > **note:** This is the version of the workflow without a selection fields for the hosts in the survey.

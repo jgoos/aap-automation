@@ -1,7 +1,6 @@
-# TESTS
+# AAP TEST
 
-This repository contains ansible code to automate tasks in Ansible Automation Platform 2.  
-Tested with AAP2 version: **2.3**
+Ansible code to test Ansible Automation Platform functionality.
 
 ## Requirements
 
