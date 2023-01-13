@@ -1,0 +1,277 @@
+---
+- name: Create patch workflow
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    aap_patch_wf_reboot_required: false
+    aap_patch_wf_update_project: false
+    aap_patch_wf_validate_certs: false
+  roles:
+    - { role: jgoos.patch_workflow.smtp_credential, smtp_credential_validate_certs: false }
+
+  post_tasks:
+    - name: Update project
+      ansible.controller.project_update:
+        project: "{{ aap_patch_wf_project_name }}"
+      when: aap_patch_wf_update_project
+
+    - name: Create a SMTP credential
+      ansible.controller.credential:
+        name: "{{ aap_patch_wf_smtp_credential_name }}"
+        organization: Default
+        state: present
+        credential_type: SMTP
+        inputs:
+          username: "{{ vault_workflow_smtp_email }}"
+          password: "{{ vault_workflow_smtp_password }}"
+          host: "{{ aap_patch_wf_smtp_host }}"
+          port: "{{ aap_patch_wf_smtp_port | string }}"
+      no_log: true
+
+    - name: Create sanitize input job template
+      ansible.controller.job_template:
+        name: "Patch Workflow Sanitize Input"
+        description: "Sanitize Checks"
+        use_fact_cache: true
+        job_type: "run"
+        organization: "{{ aap_patch_wf_organization_name }}"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        inventory: "{{ aap_patch_wf_inventory }}"
+        project: "{{ aap_patch_wf_project_name }}"
+        playbook: "playbooks/sanitize_input.yml"
+        state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+
+    - name: Create PRE patching checks
+      ansible.controller.job_template:
+        name: "PRE patching checks"
+        description: "PRE patching checks"
+        credentials:
+          - "{{ aap_patch_wf_machine_credential }}"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        inventory: "{{ aap_patch_wf_inventory }}"
+        use_fact_cache: true
+        job_type: "run"
+        organization: "{{ aap_patch_wf_organization_name }}"
+        project: "{{ aap_patch_wf_project_name }}"
+        playbook: "playbooks/pre_patching_checks.yml"
+        state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+
+    - name: Create Patch job template
+      ansible.controller.job_template:
+        name: "Patch system"
+        description: "Patch the system"
+        credentials:
+          - "{{ aap_patch_wf_machine_credential }}"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        inventory: "{{ aap_patch_wf_inventory }}"
+        use_fact_cache: true
+        job_type: "run"
+        organization: "{{ aap_patch_wf_organization_name }}"
+        project: "{{ aap_patch_wf_project_name }}"
+        playbook: "playbooks/patch_system.yml"
+        state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+
+    - name: Create Reboot job template
+      ansible.controller.job_template:
+        name: "Reboot system"
+        description: "Reboot the system"
+        credentials:
+          - "{{ aap_patch_wf_machine_credential }}"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        inventory: "{{ aap_patch_wf_inventory }}"
+        use_fact_cache: true
+        job_type: "run"
+        organization: "{{ aap_patch_wf_organization_name }}"
+        project: "{{ aap_patch_wf_project_name }}"
+        playbook: "playbooks/reboot_system.yml"
+        state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+
+    - name: Create POST patching checks
+      ansible.controller.job_template:
+        name: "POST patching checks"
+        description: "POST patching checks"
+        credentials:
+          - "{{ aap_patch_wf_machine_credential }}"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        inventory: "{{ aap_patch_wf_inventory }}"
+        use_fact_cache: true
+        job_type: "run"
+        organization: "{{ aap_patch_wf_organization_name }}"
+        project: "{{ aap_patch_wf_project_name }}"
+        playbook: "playbooks/post_patching_checks.yml"
+        state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+
+    - name: Create Mail job template
+      ansible.controller.job_template:
+        name: "Mail patch result"
+        description: "Mail patch result"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        inventory: "{{ aap_patch_wf_inventory }}"
+        use_fact_cache: true
+        job_type: "run"
+        credentials: "{{ aap_patch_wf_smtp_credential_name }}"
+        organization: "{{ aap_patch_wf_organization_name }}"
+        project: "{{ aap_patch_wf_project_name }}"
+        playbook: "playbooks/send_email.yml"
+        state: "present"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+
+    # TODO fetch hostnames to update the survey selection field
+    - name: Query remote inventory
+      ansible.builtin.set_fact:
+        input_target_hosts: host1.example.com
+
+    - name: Create list of hostnames
+      add_host:
+        name: "{{ item }}"
+      loop: "{{ groups['all'] }}"
+      register: host_list
+
+    - name: What
+      debug:
+        var: host_list
+
+    - name: Create string of comma-separated hostnames
+      set_fact:
+        hostname_string: "{{ host_list.results | map(attribute='add_host.host_name') | join(',') }}"
+          #hostname_string: "{{ host_list.results | map(attribute='ansible_facts.hostname') | join(',') }}"
+      run_once: true
+
+    - name: What
+      debug:
+        var: hostname_string
+      run_once: true
+
+    - name: Create a workflow job template
+      ansible.controller.workflow_job_template:
+        name: "Patch Workflow"
+        description: created by Ansible Playbook
+        organization: "{{ aap_patch_wf_organization_name }}"
+        ask_inventory_on_launch: true
+        ask_limit_on_launch: true
+        destroy_current_nodes: true
+        limit: "{{ aap_patch_wf_limit }}"
+        inventory: "{{ aap_patch_wf_inventory }}"
+        validate_certs: "{{ aap_patch_wf_validate_certs }}"
+        survey_enabled: true
+        # survey_spec: "{{ lookup('file', '{{ playbook_dir }}/surveys/survey_spec.json') }}"
+        survey_spec:
+          name: Survey Example template
+          description: Description goes here
+          spec:
+            - question_name: "Reboot the server after patching?"
+              type: "multiplechoice"
+              question_description: "Selecting yes will reboot the server after patching"
+              variable: "aap_patch_wf_survey_reboot_selected"
+              choices: ["yes", "no"]
+              required: true
+              default: "no"
+            - question_name: Target Host
+              question_description: What is the hostname?
+              required: true
+              type: text
+              variable: target_hosts
+              min: 0
+              max: 1024
+              default: "{{ input_target_hosts }}"
+              choices: ''
+              new_question: true
+            - question_name: "mchoice"
+              type: "multiselect"
+              question_description: "Can have multiples of these"
+              variable: "multi_choice"
+              choices: "{{ hostname_string }}"
+                #choices: ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "twelve", "thirteen"]
+              required: false
+              default: ""
+                #default: "one\nthree"
+        workflow_nodes:
+          - identifier: "Sanitize survey input"
+            unified_job_template:
+              organization:
+                name: "{{ aap_patch_wf_organization_name }}"
+              name: "Patch Workflow Sanitize Input"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Pre-patch reqs and checks"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Pre-patch reqs and checks"
+            unified_job_template:
+              organization:
+                name: "{{ aap_patch_wf_organization_name }}"
+              name: "PRE patching checks"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Patching"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Patching"
+            unified_job_template:
+              organization:
+                name: "{{ aap_patch_wf_organization_name }}"
+              name: "Patch system"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Reboot"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Reboot"
+            unified_job_template:
+              organization:
+                name: "{{ aap_patch_wf_organization_name }}"
+              name: "Reboot system"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Post patching checks"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Post patching checks"
+            unified_job_template:
+              organization:
+                name: "{{ aap_patch_wf_organization_name }}"
+              name: "POST patching checks"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: "Send email to system owner"
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: "Send email to system owner"
+            unified_job_template:
+              organization:
+                name: "{{ aap_patch_wf_organization_name }}"
+              name: "Mail patch result"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes: []
+              failure_nodes: []
+              always_nodes: []
+              credentials: []

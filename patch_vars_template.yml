@@ -1,0 +1,9 @@
+---
+aap_patch_wf_inventory: "example_test_inventory"
+aap_patch_wf_limit: example_client.home.arpa
+aap_patch_wf_machine_credential: "example_test_machine_cred"
+aap_patch_wf_organization_name: <ORG_NAME>
+aap_patch_wf_project_name: "<PROJECT_NAME>"
+aap_patch_wf_smtp_credential_name: "<SMTP_CREDENTIAL_NAME>"
+aap_patch_wf_smtp_host: "<smtp.server>"
+aap_patch_wf_smtp_port: 587
