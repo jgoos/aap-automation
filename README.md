@@ -4,7 +4,7 @@ Create objects in Ansible Automation Platform.
 
 ## Patch Workflow
 
-- [PATCH_WORKFLOW.md](APATCH_WORKFLOW.md)
+- [PATCH_WORKFLOW.md](PATCH_WORKFLOW.md)
 
 ## Test Ansible Automation Platform:
 
