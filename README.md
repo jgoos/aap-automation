@@ -1,12 +1,12 @@
-# aap2-automation
+# Ansible Automation
 
-This repository contains ansible code to automate tasks in Ansible Automation Platform 2.  
-Tested with AAP2 version: **2.3**
+Create objects in Ansible Automation Platform.
 
-## Tests
+## Patch Workflow
 
-- [TESTS.md](TESTS.md)
+- [PATCH_WORKFLOW.md](PATCH_WORKFLOW.md)
 
-## Workflow
+## Test Ansible Automation Platform:
 
-- [WORKFLOWS.md](WORKFLOWS.md)
+- [AAP_TEST.md](AAP_TEST.md)
+
