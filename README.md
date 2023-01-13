@@ -6,7 +6,7 @@ Create objects in Ansible Automation Platform.
 
 - [PATCH_WORKFLOW.md](APATCH_WORKFLOW.md)
 
-## Ansible Automation Platform Tests:
+## Test Ansible Automation Platform:
 
-- [AAP_TESTS.md](AAP_TESTS.md)
+- [AAP_TEST.md](AAP_TEST.md)
 
