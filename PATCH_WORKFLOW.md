@@ -22,21 +22,26 @@ vault_workflow_smtp_email: "johndoe@example.com"
 
 ```
 
-## Create Patch Workflow
+## Create Patch Workflow `patch_vars.yml`
 
 Use the `patch_vars_template.yml` template.
 
-1. copy the `patch_vars_template.yml` to `patch_vars.yml`
+1. copy the [patch_vars_template.yml](patch_vars_template.yml) to `patch_vars.yml`
 2. fill in the `patch_vars.yml`
 
 > **note:** or add the variables from the template to inventory `group_vars`.
+
 ## Usage
+
+Run the [create_patch_workflow.yml](playbooks/create_patch_workflow.yml) playbook to create the workflow.
 
 ``` bash
 ansible-playbook -e @vault.yml -e @patch_vars.yml playbooks/create_patch_workflow.yml -v --ask-vault-pass
 ```
 
-## Overview
+## Workflow Overview
+
+> **note:** This is the version of the workflow without a selection fields for the hosts in the survey.
 
 ``` mermaid
 graph TB
