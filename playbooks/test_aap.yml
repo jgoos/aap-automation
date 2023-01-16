@@ -30,13 +30,13 @@
         state: "absent"
       ignore_errors: true
 
-    - name: Delete Project
+    - name: Delete project
       ansible.controller.project:
         name: "{{ test_aap_project_name }}"
         organization: "{{ test_aap_organization_name }}"
         state: absent
 
-    - name: Delete a SCM credential
+    - name: Delete SCM credential
       ansible.controller.credential:
         name: "{{ test_aap_git_credential_name }}"
         organization: "{{ test_aap_organization_name }}"
@@ -44,7 +44,7 @@
         credential_type: Source Control
         validate_certs: "{{ test_aap_validate_certs }}"
 
-    - name: Delete a Machine credential
+    - name: Delete Machine credential
       ansible.controller.credential:
         name: "{{ test_aap_machine_credential_name }}"
         organization: "{{ test_aap_organization_name }}"
