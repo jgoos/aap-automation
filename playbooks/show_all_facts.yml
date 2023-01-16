@@ -1,7 +1,6 @@
 ---
 - name: Show Facts
-  hosts: localhost
-  connection: local
+  hosts: all
   tasks:
     - name: Print all available facts
       ansible.builtin.debug:
