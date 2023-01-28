@@ -34,6 +34,8 @@ Create a SCM project in `AAP` using this git repository as source.
 
 See: https://docs.ansible.com/automation-controller/latest/html/quickstart/create_project.html
 
+> **note:** Use the same project and organization as defined in the `patch_vars.yml` (which is based on [patch_vars_template.yml](patch_vars_template.yml).
+
 ### Install ansible collections
 
 ``` bash
