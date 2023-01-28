@@ -28,6 +28,12 @@ sudo subscription-manager repos --enable ansible-automation-platform-2.3-for-rhe
 sudo dnf install -y automation-controller-cli.x86_64
 ```
 
+### Create Project in Ansible Automation Platform
+
+Create a SCM project in `AAP` using this git repository as source.
+
+See: https://docs.ansible.com/automation-controller/latest/html/quickstart/create_project.html
+
 ### Install ansible collections
 
 ``` bash
