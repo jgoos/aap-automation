@@ -8,7 +8,7 @@
     aap_patch_wf_update_project: false
     aap_patch_wf_validate_certs: false
   roles:
-    - { role: jgoos.patch_workflow.smtp_credential, smtp_credential_validate_certs: false }
+    - { role: jgoos.patching.smtp_credential, smtp_credential_validate_certs: false }
 
   post_tasks:
     - name: Update project

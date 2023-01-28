@@ -1,6 +1,6 @@
 ---
 system_owner:
-  name: "Joe Sixpack"
-  email: "78yughvb@gmail.com"
+  name: "User1"
+  email: "<email_address>"
 release:
   version: v1.0.1

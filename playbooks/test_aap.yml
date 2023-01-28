@@ -1,5 +1,5 @@
 ---
-- name: Test Ansible Automation Platform
+- name: Functional test by delete and create Ansible Automation Platform objects
   hosts: localhost
   connection: local
   gather_facts: false
