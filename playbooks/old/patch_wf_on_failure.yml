@@ -1,9 +1,0 @@
----
-- name: Run on workflow failure
-  hosts: localhost
-  connection: local
-  gather_facts: false
-  tasks:
-    - name: Run on failure
-      ansible.builtin.debug:
-        msg: "The workflow failed"
